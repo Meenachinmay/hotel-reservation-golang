@@ -1,13 +1,15 @@
 package main
 
-import "github.com/gofiber/fiber/v2"
+import (
+	api "github.com/Meenachinmay/hotel-reservation-golang/api/handlers"
+	"github.com/gofiber/fiber/v2"
+)
 
 func main() {
     app := fiber.New()
+	apiv1 := app.Group("/api/v1")
 
-    app.Get("/", func(c *fiber.Ctx) error {
-        return c.SendString("Hello, World!")
-    })
+    apiv1.Get("/user", api.HandleGetUsers)
 
     app.Listen(":3000")
 }
