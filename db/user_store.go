@@ -13,19 +13,21 @@ const userColl = "users"
 
 type UserStore interface {
 	GetUserByID(context.Context, string) (*types.User, error)
+	GetUsers(context.Context) ([]*types.User, error)
+	CreateUser(context.Context, *types.User) (*types.User, error)
 }
 
-type MongoUserStore struct{
-	client *mongo.Client
-	dbName string
+type MongoUserStore struct {
+	client     *mongo.Client
+	dbName     string
 	collection *mongo.Collection
 }
 
-func NewMongoUserStore (client *mongo.Client) *MongoUserStore {
+func NewMongoUserStore(client *mongo.Client) *MongoUserStore {
 	return &MongoUserStore{
-		client: client,
+		client:     client,
 		collection: client.Database(DBNAME).Collection(userColl),
-		dbName: DBNAME,
+		dbName:     DBNAME,
 	}
 }
 
@@ -41,4 +43,29 @@ func (s *MongoUserStore) GetUserByID(ctx context.Context, id string) (*types.Use
 	}
 
 	return &user, nil
+}
+
+func (s *MongoUserStore) GetUsers(ctx context.Context) ([]*types.User, error) {
+	cur, err := s.collection.Find(ctx, bson.M{})
+	if err != nil {
+		return nil, err
+	}
+
+	var users []*types.User
+	if err := cur.All(ctx, &users); err != nil {
+		return []*types.User{}, nil
+	}
+
+	return users, nil
+}
+
+func (s *MongoUserStore) CreateUser(ctx context.Context, user *types.User) (*types.User, error) {
+	result, err := s.collection.InsertOne(ctx, user)
+
+	if err != nil {
+		return nil, err
+	}
+
+	user.ID = result.InsertedID.(primitive.ObjectID)
+	return user, nil
 }

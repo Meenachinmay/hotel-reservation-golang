@@ -18,15 +18,17 @@ const collection_name = "users"
 func main() {
 	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(dbURI))
 	if err != nil {
-		log.Fatal(err) 
+		log.Fatal(err)
 	}
 
 	// handlers initialization
 	userHandler := api.NewUserHandler(db.NewMongoUserStore(client))
-    app := fiber.New()
+	app := fiber.New()
 	apiv1 := app.Group("/api/v1")
 
-    apiv1.Get("/user/:id", userHandler.HandleGetUser)
+	apiv1.Get("/user/:id", userHandler.HandleGetUser)
+	apiv1.Get("/users", userHandler.HandleGetUsers)
+	apiv1.Post("/user", userHandler.HandlePostUser)
 
-    app.Listen(":3000")
+	app.Listen(":3000")
 }
