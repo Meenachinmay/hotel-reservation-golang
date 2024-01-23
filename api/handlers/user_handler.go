@@ -40,15 +40,24 @@ func (h *UserHandler) HandleGetUsers(c *fiber.Ctx) error {
 
 func (h *UserHandler) HandlePostUser(c *fiber.Ctx) error {
 	var params types.CreateUserParams
+
+	// get the data from the request
 	if err := c.BodyParser(&params); err != nil {
 		return err
 	}
 
+	// validate the data got from the request
+	if err := params.Validate(); err != nil {
+		return err
+	}
+
+	// hash the password
 	user, err := types.NewUserFromParams(params)
 	if err != nil {
 		return err
 	}
 
+	// finally create the user and return it
 	insertedUser, err := h.userStore.CreateUser(c.Context(), user)
 	if err != nil {
 		return err
