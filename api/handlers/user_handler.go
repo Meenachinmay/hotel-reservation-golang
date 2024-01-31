@@ -39,7 +39,11 @@ func (h *UserHandler) HandleGetUsers(c *fiber.Ctx) error {
 }
 
 func (h *UserHandler) HandleDeleteUser(c *fiber.Ctx) error {
-	return nil
+	userID := c.Params("id")
+	if err := h.userStore.DeleteUser(c.Context(), userID); err != nil {
+		return err
+	}
+	return c.JSON(map[string]string{"msg": "OK"})
 }
 
 func (h *UserHandler) HandleUpdateUser(c *fiber.Ctx) error {
