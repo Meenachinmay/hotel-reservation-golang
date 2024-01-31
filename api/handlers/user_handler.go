@@ -2,7 +2,9 @@ package api
 
 import (
 	"context"
+	"errors"
 	"github.com/Meenachinmay/hotel-reservation-golang/types"
+	"go.mongodb.org/mongo-driver/mongo"
 
 	"github.com/Meenachinmay/hotel-reservation-golang/db"
 	"github.com/gofiber/fiber/v2"
@@ -22,7 +24,11 @@ func (h *UserHandler) HandleGetUser(c *fiber.Ctx) error {
 	id := c.Params("id")
 	ctx := context.Background()
 	user, err := h.userStore.GetUserByID(ctx, id)
+
 	if err != nil {
+		if errors.Is(err, mongo.ErrNoDocuments) {
+			return c.JSON(map[string]string{"error": "not found."})
+		}
 		return err
 	}
 
