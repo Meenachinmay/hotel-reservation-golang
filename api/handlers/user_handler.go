@@ -38,6 +38,14 @@ func (h *UserHandler) HandleGetUsers(c *fiber.Ctx) error {
 	return c.JSON(users)
 }
 
+func (h *UserHandler) HandleDeleteUser(c *fiber.Ctx) error {
+	return nil
+}
+
+func (h *UserHandler) HandleUpdateUser(c *fiber.Ctx) error {
+	return nil
+}
+
 func (h *UserHandler) HandlePostUser(c *fiber.Ctx) error {
 	var params types.CreateUserParams
 

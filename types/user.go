@@ -24,6 +24,7 @@ type CreateUserParams struct {
 }
 
 func (params CreateUserParams) Validate() error {
+
 	if len(params.FirstName) < minFirstNameLen {
 		return fmt.Errorf("firstName length should at least %d chars", minFirstNameLen)
 	}
